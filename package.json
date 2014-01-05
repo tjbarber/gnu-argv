@@ -19,6 +19,9 @@
   "dependencies": {
     "underscore": "latest"
   },
+  "devDependencies": {
+    "chai": "latest"
+  },
   "author": "T.J. Barber",
   "license": "BSD",
   "bugs": {
