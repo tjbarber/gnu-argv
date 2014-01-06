@@ -2,7 +2,8 @@ The documentation is pretty poor right now, and I'm going to fix it up quite a b
 
 Examples:
 
-```argv.config([
+```
+argv.config([
 	{
 		reference: 'ssh',
 		options: 'o',
@@ -27,24 +28,31 @@ Examples:
  		longOptions: '--option',
  		arguments:true
  	}
- ]);```
+ ]);
+```
 
 sets options by passing argv.config an array of objects.
 
-```argv.set('ssh', {
- 	options: 'o',
+```
+argv.set('ssh', {
+	options: 'o',
  	longOptions: '--option',
  	arguments: true
-});```
+}); 
+```
 
 sets a single option, good if you only want to set up one or two options.
 
-```arvg.isSet('open');```
+```
+arvg.isSet('open');
+```
 
 returns true or false
 
 
-```argv.get('open');```
+```
+argv.get('open');
+```
 
 returns arguments to the option if they exist in the form of an array, otherwise returns undefined.
 
