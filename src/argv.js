@@ -1,7 +1,10 @@
 "use strict";
 var _ = require('underscore');
 
-var argv = {};
+var argv = {},
+	config = {
+		argv = process.argv
+	};
 
 // system functions
 
@@ -11,7 +14,7 @@ var parseARGV = function parseARGV() {
 
 // exposed methods
 
-var config = function config(options) {
+var multipleSet = function config(options) {
 	_.each(options, function(el, index){
 		set(el.reference, el);
 	});
@@ -30,6 +33,7 @@ var get = function(reference) {
 };
 
 module.exports.config = config;
+module.exports.multipleSet = multipleSet;
 module.exports.set 	  = set;
 module.exports.isSet  = isSet;
 module.exports.get 	  = get;

@@ -2,7 +2,7 @@ The documentation is pretty poor right now, and I'm going to fix it up quite a b
 
 Examples:
 
-```this.config([
+```argv.config([
 	{
 		reference: 'ssh',
 		options: 'o',
@@ -31,7 +31,7 @@ Examples:
 
 sets options by passing argv.config an array of objects.
 
-```this.set('ssh', {
+```argv.set('ssh', {
  	options: 'o',
  	longOptions: '--option',
  	arguments: true
@@ -46,5 +46,5 @@ returns true or false
 
 ```argv.get('open');```
 
-returns arguments to the option if they exist, otherwise returns undefined.
+returns arguments to the option if they exist in the form of an array, otherwise returns undefined.
 
