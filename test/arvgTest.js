@@ -1,10 +1,11 @@
 var expect = require('chai').expect;
 var argv = require('../src/argv.js');
+argv.config.status = "test";
 
 describe("ARGV", function() {
 	describe("#set()", function() {
 		it("should set the option as ready to use", function() {
-			var args = ['-o', '-p'];
+			var args = ['-o'];
 			argv.config.set = {};
 			argv.config.argv = args; 
 

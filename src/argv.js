@@ -12,18 +12,19 @@ var config = {
 var parseCurrentARGS = function parseCurrentARGS() {
 	_.each(config.argv, function(el, index) {
 		// -rfdegerwe
-		if (_.has(config.allowed, el.slice(0, 1))) {
+		if (_.contains(config.allowed, el.slice(1, el.length))) {
 			return true;
 		}
 
 		// --option
 
-		if (!_.has(config.allowed, el.slice(0, 2))) {
+		if (_.contains(config.allowed, el.slice(2, el.length))) {
 			return true;
 		}
-
 		console.log("Invalid option passed.");
-		process.exit(1);
+		if (config.status !== "test") {
+			process.exit(1);
+		}
 	});
 };
 
@@ -85,6 +86,7 @@ var checkOption = function checkOption(option) {
 		console.log(option + " is not a valid one character alphanumeric option name.");
 		return false;
 	}
+	return true;
 };
 
 var parseOptions = function parseOptions(opts) {
@@ -93,13 +95,13 @@ var parseOptions = function parseOptions(opts) {
 			if (!checkOption(el)) {
 				return;
 			}
-
 			config.allowed.push(el);
 		});
 	} else {
 		if (!checkOption(opts)) {
 			return;
 		}
+
 		config.allowed.push(opts);
 	}
 };
@@ -110,17 +112,17 @@ var set = function set(obj) {
 	if (_.isArray(obj)) {
 		if (!obj.length) { return false; }
 
-		parseCurrentARGS();
-
 		_.each(obj, function(el, index) {
 			parseOptions(el.options);
 			parseOptions(el.longOptions);
 		});
 
-	} else {
 		parseCurrentARGS();
+
+	} else {
 		parseOptions(obj.options);
 		parseOptions(obj.longOptions);
+		parseCurrentARGS();
 	}
 
 	return setFlag(obj);
