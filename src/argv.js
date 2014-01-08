@@ -1,9 +1,9 @@
 "use strict";
 var _ = require('underscore');
 
-var argv = {},
-	config = {
+var config = {
 		allowed: [],
+		set: {},
 		argv: process.argv.slice(2, process.argv.length)
 	};
 
@@ -69,9 +69,11 @@ var parseArguments = function parseARGV(options) {
 };
 
 var setFlag = function setFlag(obj) {
-	if (!isOptionSet(obj.options)) { return false; }
+	if (!isOptionSet(obj.options)) { 
+		return false; 
+	}
 
-	argv[obj.reference] = {
+	config.set[obj.reference] = {
 		arguments: (obj.arguments ? parseArguments(obj.options) : null)
 	};
 
@@ -126,11 +128,11 @@ var set = function set(obj) {
 };
 
 var isSet = function(reference) {
-	return !!argv[reference];
+	return !!config.set[reference];
 };
 
 var get = function(reference) {
-	return argv[reference].arguments;
+	return config.set[reference].arguments;
 };
 
 module.exports.config = config;
