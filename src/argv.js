@@ -80,51 +80,50 @@ var setFlag = function setFlag(obj) {
 	return isSet(obj.reference);
 };
 
+var checkOption = function checkOption(option) {
+	if (option && option.length !== 1) {
+		console.log(option + " is not a valid one character alphanumeric option name.");
+		return false;
+	}
+};
+
+var parseOptions = function parseOptions(opts) {
+	if (_.isArray(opts)) {
+		_.each(opts, function(el, index) {
+			if (!checkOption(el)) {
+				return;
+			}
+
+			config.allowed.push(el);
+		});
+	} else {
+		if (!checkOption(opts)) {
+			return;
+		}
+		config.allowed.push(opts);
+	}
+};
+
 // exposed methods
 
 var set = function set(obj) {
 	if (_.isArray(obj)) {
 		if (!obj.length) { return false; }
 
-		_.each(obj, function(el, index) {
-			if (_.isArray(el.options)) {
-				_.each(el.options, function(el2, index2) {
-					if (el2.length !== 1) {
-						console.log(el + " is not a valid one character alphanumeric option name.");
-						return;
-					}
-					config.allowed.push(el2);	
-				});
-			} else {
-				if (el.options.length !== 1) {
-					console.log(el + " is not a valid one character alphanumeric option name.");
-					return;
-				}
-				config.allowed.push(el.options);
-			}
-		});
-
 		parseCurrentARGS();
 
-		_.each(options, function(el, index){
-			if (!setFlag(el)) {
-				return false;
-			}
+		_.each(obj, function(el, index) {
+			parseOptions(el.options);
+			parseOptions(el.longOptions);
 		});
-
-		return true;
 
 	} else {
 		parseCurrentARGS();
-
-		if (obj.options.length !== 1) {
-			console.log(el + " is not a valid one character alphanumeric option name.");
-			return;
-		}
-
-		config.allowed.push(obj.options);
-		return setFlag(obj);
+		parseOptions(obj.options);
+		parseOptions(obj.longOptions);
 	}
+
+	return setFlag(obj);
 };
 
 var isSet = function(reference) {
