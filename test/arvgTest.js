@@ -3,11 +3,12 @@ var argv = require('../src/argv.js');
 
 describe("ARGV", function() {
 	describe("#set()", function() {
-		it("should set the option as ready to use.", function() {
+		it("should set the option as ready to use", function() {
 			var args = ['-o', '-p'];
 			argv.config.args = args; 
 
-			var results = argv.set('open', {
+			var results = argv.set({
+				reference: 'open',
 				options: 'o'
 			});
 
@@ -18,7 +19,8 @@ describe("ARGV", function() {
 			var args = ['-f'];
 			argv.config.args = args; 
 
-			argv.set('open', {
+			argv.set({
+				reference: 'open',
 				options: ['o', 'f', 'p'],
 			});
 
@@ -31,7 +33,8 @@ describe("ARGV", function() {
 			var args = ['--file'];
 			argv.config.args = args; 
 
-			argv.set('open', {
+			argv.set({
+				reference: 'open', 
 				options: 'o',
 				longOptions: 'file'
 			});
@@ -45,17 +48,20 @@ describe("ARGV", function() {
 			var args = ['-rfa'];
 			argv.config.args = args; 
 			
-			argv.set('recursive', {
-				options: 'r'
-			});
-
-			argv.set('force', {
-				options: 'f'
-			});
-
-			argv.set('always', {
-				options: 'a'
-			});
+			argv.set([
+				{
+					reference: 'recursive', 
+					options: 'r'
+				},
+				{
+					reference: 'force',
+					options: 'f'
+				},
+				{
+					reference: 'always',
+					options: 'a'
+				}
+			]);
 
 			var results1 = argv.isSet('recursive');
 			var results2 = argv.isSet('force');
@@ -68,7 +74,7 @@ describe("ARGV", function() {
 	});
 
 	describe("#isSet()", function() {
-		it("should say if an option is set.", function() {
+		it("should say if an option is set", function() {
 			var args = ['-o'];
 			argv.config.args = args; 
 
@@ -87,7 +93,8 @@ describe("ARGV", function() {
 			var args = ['-o', 'file.js'];
 			argv.config.args = args; 
 
-			argv.set('open', {
+			argv.set({
+				reference: 'open',
 				options: 'o',
 				arguments: true
 			});
@@ -101,7 +108,8 @@ describe("ARGV", function() {
 			var args = ['-o', 'file.js', 'file2.js'];
 			argv.config.args = args; 
 
-			argv.set('open', {
+			argv.set({
+				reference: 'open', 
 				options: 'o',
 				arguments: true
 			});
@@ -109,26 +117,6 @@ describe("ARGV", function() {
 			var results = argv.get('open');
 
 			expect(results).to.equal(['file.js', 'file2.js']);
-		});
-	});
-
-	describe("#config()", function() {
-		it("should set multiple options as ready to use", function() {
-			var args = ['-o', '-p'];
-			argv.config.args = args; 
-
-			var results = argv.configset([
-				{
-					reference: 'open',
-					options: 'o'
-				},
-				{
-					reference: 'pickles',
-					options: 'p'
-				}
-			]);
-
-			expect(results).to.be.true;
 		});
 	});
 });
