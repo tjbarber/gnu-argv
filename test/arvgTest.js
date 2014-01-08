@@ -50,7 +50,7 @@ describe("ARGV", function() {
 		it("should set options not seperated by spaces", function() {
 			var args = ['-rfa'];
 			argv.config.set = {};
-			argv.config.args = args; 
+			argv.config.argv = args; 
 			
 			argv.set([
 				{
