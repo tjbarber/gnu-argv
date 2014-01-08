@@ -5,13 +5,14 @@ describe("ARGV", function() {
 	describe("#set()", function() {
 		it("should set the option as ready to use", function() {
 			var args = ['-o', '-p'];
-			argv.config.args = args; 
+			argv.config.argv = args; 
 
 			var results = argv.set({
 				reference: 'open',
 				options: 'o'
 			});
 
+			console.log(results);
 			expect(results).to.be.true;
 		});
 

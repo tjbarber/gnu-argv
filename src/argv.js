@@ -4,7 +4,7 @@ var _ = require('underscore');
 var argv = {},
 	config = {
 		allowed: [],
-		argv: process.argv
+		argv: process.argv.slice(2, process.argv.length)
 	};
 
 // system functions
@@ -28,12 +28,13 @@ var parseCurrentARGS = function parseCurrentARGS() {
 };
 
 var isOptionSet = function isOptionSet(options) {
+	var isSet = false;
 	if (_.isArray(options)) {
 		_.each(config.argv, function(arg, index) {
 			_.each(options, function(option, index) {
 				// -r or --option
 				if ((arg.slice(1, arg.length) === option) || (arg.slice(2, arg.length) === option)) {
-					return true;
+					isSet = true;
 				}
 
 				// -rf
@@ -41,10 +42,14 @@ var isOptionSet = function isOptionSet(options) {
 		});
 	} else {
 		_.each(config.argv, function(arg, index) {
-			if ((arg.slice(1, arg.length) === options) || arg.slice(2, arg.length) === option) {
-				return true;
+			if ((arg.slice(1, arg.length) === options) || arg.slice(2, arg.length) === options) {
+				isSet = true;
 			}
 		});
+	}
+
+	if (isSet) {
+		return true;
 	}
 
 	return false;
@@ -64,7 +69,7 @@ var parseArguments = function parseARGV(options) {
 };
 
 var setFlag = function setFlag(obj) {
-	if (!parseCurrentARGS(obj.options)) { return false; }
+	if (!isOptionSet(obj.options)) { return false; }
 
 	argv[obj.reference] = {
 		arguments: (obj.arguments ? parseArguments(obj.options) : null)
@@ -75,25 +80,25 @@ var setFlag = function setFlag(obj) {
 
 // exposed methods
 
-var set = function set(options) {
-	if (_.isArray(options)) {
-		if (!options.length) { return false; }
+var set = function set(obj) {
+	if (_.isArray(obj)) {
+		if (!obj.length) { return false; }
 
-		_.each(options, function(el, index) {
+		_.each(obj, function(el, index) {
 			if (_.isArray(el.options)) {
-				_.each(el.options, function(el, index) {
-					if (el.length !== 1) {
+				_.each(el.options, function(el2, index2) {
+					if (el2.length !== 1) {
 						console.log(el + " is not a valid one character alphanumeric option name.");
 						return;
 					}
-					config.allowed.push(el);	
+					config.allowed.push(el2);	
 				});
 			} else {
-				if (el.length !== 1) {
+				if (el.options.length !== 1) {
 					console.log(el + " is not a valid one character alphanumeric option name.");
 					return;
 				}
-				config.allowed.push(el);
+				config.allowed.push(el.options);
 			}
 		});
 
@@ -108,8 +113,15 @@ var set = function set(options) {
 		return true;
 
 	} else {
-		config.allowed.push(options.reference);
-		return setFlag(options);
+		parseCurrentARGS();
+
+		if (obj.options.length !== 1) {
+			console.log(el + " is not a valid one character alphanumeric option name.");
+			return;
+		}
+
+		config.allowed.push(obj.options);
+		return setFlag(obj);
 	}
 };
 
