@@ -120,13 +120,13 @@ var checkOption = function checkOption(option) {
 
 var parseOptions = function parseOptions(opts, longOptions) {
 	longOptions = (longOptions || false);
-	if (_.isArray(opts)) {
-		_.each(opts, function(el, index) {
-			if (!longOptions && !checkOption(el)) {
+	if (Array.isArray(opts)) {
+		for (var i = 0, len = opts.length; i < len, i++) {
+			if (!longOptions && !checkOption(opts[i])) {
 				return;
 			}
-			config.allowed.push(el);
-		});
+			config.allowed.push(opts[i]);
+		}
 	} else {
 		if (!longOptions && !checkOption(opts)) {
 			return;
@@ -138,21 +138,21 @@ var parseOptions = function parseOptions(opts, longOptions) {
 // exposed methods
 
 var set = function set(obj) {
-	if (_.isArray(obj)) {
+	if (Array.isArray(obj)) {
 		var results = null;
 		if (!obj.length) { return false; }
-
-		_.each(obj, function(el, index) {
-			parseOptions(el.options);
-			parseOptions(el.longOptions, true);
-		});
+		
+		for (var i = 0, len = obj.length; i < len; i++) {
+			parseOptions(obj[i].options);
+			parseOptions(obj[i].longOptions, true);
+		}
 
 		parseCurrentARGS();
 
 		// running setFlag after all the option parsing is complete
-		_.each(obj, function(el, index) {
-			results = setFlag(el);
-		});
+		for (var i = 0, len = obj.length; i < len; i++) {
+			results = setFlag(obj[i]);
+		}
 
 		if (results) {
 			return true;
