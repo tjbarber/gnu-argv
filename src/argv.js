@@ -1,5 +1,4 @@
 "use strict";
-var _ = require('underscore');
 
 var config = {
 		allowed: [],
@@ -12,31 +11,34 @@ var config = {
 
 var parseCurrentARGS = function parseCurrentARGS() {
 	var allowed = true;
-	_.each(config.argv, function(el, index) {
+	for (var i = 0, len = config.argv.length; i < len; i++) {
+		var el = config.argv[i];
 		// -rfdegerwe
 		if (el[0] === '-' && el[1] !== '-') {
 			el = el.slice(1, el.length);
-			_.each(el, function(el2, index2) {
-				if (!_.contains(config.allowed, el2)) {
+			for (var j = 0, len2 = el.length; j < len2; j++) {
+				var el2 = el[j];
+				if (config.allowed.indexOf(el2) === -1) {
 					allowed = false;
 				}
-			});
+			}
 			if (allowed) {
 				return true;
 			}
 			return false;
 		}
-
+		
 		// --option
-		if (_.contains(config.allowed, el.slice(2, el.length))) {
+		
+		if (config.allowed.indexOf(el.slice(2, el.length)) !== -1) {
 			return true;
 		}
-
+		
 		console.log("Invalid option passed.");
 		if (config.status !== "test") {
 			process.exit(1);
 		}
-	});
+	}
 };
 
 var isOptionSet = function isOptionSet(options) {
@@ -50,11 +52,12 @@ var isOptionSet = function isOptionSet(options) {
 		if (arg[0] === '-' && arg[1] !== '-' && arg.length > 2) {
 			var results = null;
 			arg = arg.slice(1, arg.length);
-			_.each(arg, function(el, index) {
-				if (el === option) {
+			
+			for (var i = 0, len = arg.length; i < len; i++) {
+				if (arg[i] === option) {
 					results = true;
 				}
-			});
+			}
 
 			if (results) {
 				return true;
@@ -64,20 +67,22 @@ var isOptionSet = function isOptionSet(options) {
 	};
 
 	var isSet = false;
-	if (_.isArray(options)) {
-		_.each(config.argv, function(arg, index) {
-			_.each(options, function(option, index) {
-				if (checkArg(arg, option)) {
+	if (Array.isArray(options)) {
+		for (var i = 0, len = config.argv.length; i < len; i++) {
+			var arg = config.argv[i];
+			
+			for (var j = 0, len2 = options.length; j < len2; j++) {
+				if (checkArg(arg, options[j])) {
 					isSet = true;
-				};
-			});
-		});
+				}
+			}
+		}
 	} else {
-		_.each(config.argv, function(arg, index) {
-			if (checkArg(arg, options)) {
+		for (var i = 0, len = config.argv.length; i < len; i++) {
+			if (checkArg(config.argv[i], options)) {
 				isSet = true;
 			}
-		});
+		}
 	}
 
 	if (isSet) {
@@ -89,15 +94,6 @@ var isOptionSet = function isOptionSet(options) {
 
 var parseArguments = function parseARGV(options) {
 
-	if (_.isArray(options)) {
-		_.each(options, function(el, index) {
-
-
-			if (!checkOption(el)) { return null; }
-		});
-	} else {
-		if (!checkOption(options)) { return null; }
-	}
 };
 
 var setFlag = function setFlag(obj) {
@@ -121,7 +117,7 @@ var checkOption = function checkOption(option) {
 var parseOptions = function parseOptions(opts, longOptions) {
 	longOptions = (longOptions || false);
 	if (Array.isArray(opts)) {
-		for (var i = 0, len = opts.length; i < len, i++) {
+		for (var i = 0, len = opts.length; i < len; i++) {
 			if (!longOptions && !checkOption(opts[i])) {
 				return;
 			}
@@ -168,11 +164,11 @@ var set = function set(obj) {
 	return setFlag(obj);
 };
 
-var isSet = function(reference) {
+var isSet = function isSet(reference) {
 	return !!config.set[reference];
 };
 
-var get = function(reference) {
+var get = function get(reference) {
 	return config.set[reference].arguments;
 };
 

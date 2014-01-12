@@ -16,9 +16,6 @@
     "process",
     "posix"
   ],
-  "dependencies": {
-    "underscore": "latest"
-  },
   "devDependencies": {
     "chai": "latest"
   },
