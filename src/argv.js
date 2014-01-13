@@ -29,7 +29,6 @@ var parseCurrentARGS = function parseCurrentARGS() {
 		}
 		
 		// --option
-		
 		if (config.allowed.indexOf(el.slice(2, el.length)) !== -1) {
 			return true;
 		}
@@ -97,7 +96,7 @@ var parseArguments = function parseARGV(options) {
 };
 
 var setFlag = function setFlag(obj) {
-	if (!isOptionSet(obj.options)) { return false; }
+	if (!isOptionSet(obj.options) && !isOptionSet(obj.longOptions)) { return false; }
 
 	config.set[obj.reference] = {
 		arguments: (obj.arguments ? parseArguments(obj.options) : null)
@@ -115,6 +114,10 @@ var checkOption = function checkOption(option) {
 };
 
 var parseOptions = function parseOptions(opts, longOptions) {
+	// keeps undefined from being added to config.allowed
+	// from a option object with no longOptions
+	if (!opts) { return };
+	
 	longOptions = (longOptions || false);
 	if (Array.isArray(opts)) {
 		for (var i = 0, len = opts.length; i < len; i++) {
