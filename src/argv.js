@@ -102,18 +102,15 @@ var parseArguments = function parseARGV(obj) {
 				if (el.slice(1, 2) === opt && el.length > 2) {
 					args.push(el.slice(2, el.length));
 				} else {
-					var j = i + 1;
+					var stop = false;
 					
-					while (config.argv[j] !== undefined) {
-						var el2 = config.argv[j];
-						
-						if (el2[0] !== '-') {
+					while (stop === false) {
+						var el2 = config.argv[i + 1];
+
+						if (el2 !== undefined && el2[0] !== '-') {
 							args.push(el2);
-						} else {
-							break
 						}
-						
-						j++;
+						stop = true;
 					}
 				}
 			}
@@ -122,18 +119,16 @@ var parseArguments = function parseARGV(obj) {
 				var el = config.argv[i];
 				
 				if (el.slice(2, el.length) === option) {
-					var j = i + 1;
+					var stop = false;
 					
-					while (config.argv[j] !== undefined) {
-						var el2 = config.argv[j];
+					while (stop === false) {
+						var el2 = config.argv[i + 1];
 						
-						if (el2[0] !== '-') {
+						if (el2 !== undefined && el2[0] !== '-') {
 							args.push(el2);
-						} else {
-							break;
 						}
 						
-						j++;	
+						stop = true;
 					} 
 				} else if (el.slice(2, option.length + 2) === option && el.length > option.length + 2) {
 					var arr = el.split('=');
