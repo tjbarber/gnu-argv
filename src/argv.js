@@ -10,6 +10,14 @@ var config = {
 // system functions
 
 var parseCurrentARGS = function parseCurrentARGS() {
+	
+	var abort = function abort() {
+		console.log("Invalid option passed.");
+		if (config.status !== "test") {
+			process.exit(1);
+		}
+	}
+	
 	var allowed = true;
 	for (var i = 0, len = config.argv.length; i < len; i++) {
 		var el = config.argv[i];
@@ -19,13 +27,11 @@ var parseCurrentARGS = function parseCurrentARGS() {
 			for (var j = 0, len2 = el.length; j < len2; j++) {
 				var el2 = el[j];
 				if (config.allowed.indexOf(el2) === -1) {
-					allowed = false;
+					abort();
 				}
 			}
-			if (allowed) {
-				return true;
-			}
-			return false;
+
+			return true;
 		}
 		
 		// --option
@@ -33,10 +39,7 @@ var parseCurrentARGS = function parseCurrentARGS() {
 			return true;
 		}
 		
-		console.log("Invalid option passed.");
-		if (config.status !== "test") {
-			process.exit(1);
-		}
+		abort();
 	}
 };
 
