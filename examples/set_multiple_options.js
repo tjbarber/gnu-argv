@@ -1,4 +1,4 @@
-var argv = require('./argv.js');
+var argv = require('../src/argv.js');
 
 argv.set([
 	{

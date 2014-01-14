@@ -35,6 +35,7 @@ var parseCurrentARGS = function parseCurrentARGS() {
 		}
 		
 		// --option
+		var el = el.split('=')[0]; // for --option=foo
 		if (config.allowed.indexOf(el.slice(2, el.length)) !== -1) {
 			return true;
 		}
@@ -45,8 +46,15 @@ var parseCurrentARGS = function parseCurrentARGS() {
 
 var isOptionSet = function isOptionSet(options) {
 	var checkArg = function checkArg(arg, option) {
+		var splitArg = arg.split('=');
+		
 		// -r or --option
 		if ((arg.slice(1, arg.length) === option) || (arg.slice(2, arg.length) === option)) {
+			return true;
+		}
+		
+		// --option=arg
+		if (splitArg[0].slice(2, splitArg[0].length) === option) {
 			return true;
 		}
 
@@ -100,8 +108,11 @@ var parseArguments = function parseARGV(obj) {
 		var ARGVContainsOpt = false;
 		
 		for (var i = 0, len = config.argv.length; i < len; i++) {
+			var splitEl = config.argv[i].split('=')[0];
+
 			if (config.argv[i].slice(2, config.argv[i].length) === opt || 
-				config.argv[i].slice(1, 2) === opt) {
+				config.argv[i].slice(1, 2) === opt || 
+				splitEl.slice(2, splitEl.length) === opt) {
 					ARGVContainsOpt = true;
 				}
 		}
@@ -128,8 +139,9 @@ var parseArguments = function parseARGV(obj) {
 			}
 		} else {
 			for (var i = 0, len = config.argv.length; i < len; i++) {
-				var el = config.argv[i];
-
+				var el = config.argv[i],
+					splitEl = config.argv[i].split('=');
+					
 				if (el.slice(2, el.length) === opt) {
 					var j = i + 1;
 					
@@ -141,10 +153,9 @@ var parseArguments = function parseARGV(obj) {
 						}
 						
 						j++;					
-					} // i have no clue what the next part is lol
-				} else if (el.slice(2, opt.length + 2) === opt && el.length > opt.length + 2) {
-					var arr = el.split('=');
-					args.push(el.slice(1, el.length).join('='));
+					}
+				} else if (splitEl[0].slice(2, splitEl[0].length) === opt && el.length > opt.length + 2) {
+					args.push(splitEl.slice(1, el.length).join('='));
 				}
 			}
 		}
@@ -174,7 +185,7 @@ var parseArguments = function parseARGV(obj) {
 
 var setFlag = function setFlag(obj) {
 	if (!isOptionSet(obj.options) && !isOptionSet(obj.longOptions)) { return false; }
-	
+
 	config.set[obj.reference] = {
 		arguments: (obj.arguments ? parseArguments(obj) : null)
 	};
