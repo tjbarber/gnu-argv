@@ -109,8 +109,6 @@ var parseArguments = function parseARGV(obj) {
 			for (var i = 0, len = config.argv.length; i < len; i++) {
 				var el = config.argv[i];
 				
-				// may be able to take this out
-				console.log("im here");
 				if (el.slice(0, 1) === '-' && el.slice(1, 2) === opt && el.length > 2) {
 					args.push(el.slice(2, el.length));
 				} else {
@@ -129,21 +127,20 @@ var parseArguments = function parseARGV(obj) {
 		} else {
 			for (var i = 0, len = config.argv.length; i < len; i++) {
 				var el = config.argv[i];
-				console.log("im here");
-				
-				if (el.slice(2, el.length) === option) {
-					var stop = false;
+
+				if (el.slice(2, el.length) === opt) {
+					var j = i + 1;
 					
-					while (stop === false) {
-						var el2 = config.argv[i + 1];
+					while (config.argv[j] && config.argv[j].slice(0, 1) !== '-') {
+						var el2 = config.argv[j];
 						
-						if (el2 !== undefined && el2[0] !== '-') {
+						if (el2 !== undefined) {
 							args.push(el2);
 						}
 						
-						stop = true;
-					} 
-				} else if (el.slice(2, option.length + 2) === option && el.length > option.length + 2) {
+						j++;					
+					} // i have no clue what the next part is lol
+				} else if (el.slice(2, opt.length + 2) === opt && el.length > opt.length + 2) {
 					var arr = el.split('=');
 					args.push(el.slice(1, el.length).join('='));
 				}

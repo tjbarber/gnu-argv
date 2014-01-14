@@ -2,7 +2,7 @@ var argv = require('./argv.js');
 
 argv.set({
 	reference: 'open',
-	options: 'o',
+	longOptions: 'open',
 	arguments: true
 });
 
