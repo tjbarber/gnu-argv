@@ -99,7 +99,7 @@ var parseArguments = function parseARGV(obj) {
 			for (var i = 0, len = config.argv.length; i < len; i++) {
 				var el = config.argv[i];
 				
-				if (el.slice(1, 2) === opt && el.length > 2) {
+				if (el.slice(0, 1) === '-' && el.slice(1, 2) === opt && el.length > 2) {
 					args.push(el.slice(2, el.length));
 				} else {
 					var stop = false;
