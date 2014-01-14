@@ -1,21 +1,16 @@
 var argv = require('./argv.js');
 
-argv.set([
-	{
-		reference: 'open',
-		options: 'o',
-		longOptions: 'open'
-	},
-	// {
-	// 	reference: 'close',
-	// 	options: 'c',
-	// },
-	// {
-	// 	reference: 'exit',
-	// 	options: 'e',
-	// }
-]);
+var args = ['-o', 'file.js'];
+argv.config.set = {};
+argv.config.argv = args;
+console.log(argv.config.argv);
 
-console.log(argv.isSet('open'));
+argv.set({
+	reference: 'open',
+	options: 'o',
+	arguments: true
+});
+
+console.log(argv.get('open'));
 // console.log(argv.isSet('close'));
 // console.log(argv.isSet('exit'));

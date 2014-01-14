@@ -98,7 +98,7 @@ describe("ARGV", function() {
 		it("should return the arguments of a given option", function() {
 			var args = ['-o', 'file.js'];
 			argv.config.set = {};
-			argv.config.args = args; 
+			argv.config.argv = args; 
 
 			argv.set({
 				reference: 'open',
@@ -108,13 +108,13 @@ describe("ARGV", function() {
 
 			var results = argv.get('open');
 
-			expect(results).to.equal('file.js');
+			expect(results).to.have.members(['file.js']);
 		});
 
 		it("should return multiple arguments of a given option", function() {
 			var args = ['-o', 'file.js', 'file2.js'];
 			argv.config.set = {};
-			argv.config.args = args; 
+			argv.config.argv = args; 
 
 			argv.set({
 				reference: 'open', 
@@ -124,7 +124,7 @@ describe("ARGV", function() {
 
 			var results = argv.get('open');
 
-			expect(results).to.equal(['file.js', 'file2.js']);
+			expect(results).to.have.members(['file.js', 'file2.js']);
 		});
 	});
 });

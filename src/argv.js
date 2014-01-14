@@ -91,15 +91,86 @@ var isOptionSet = function isOptionSet(options) {
 	return false;
 };
 
-var parseArguments = function parseARGV(options) {
-
+var parseArguments = function parseARGV(obj) {
+	var args = [];
+	var searchForArguments = function searchForArguments(opt) {
+		if ((config.argv.indexOf("-" + opt) === -1) && (config.argv.indexOf("-" + opt) === -1)) { return; }
+		if (opt.length === 1) {
+			for (var i = 0, len = config.argv.length; i < len; i++) {
+				var el = config.argv[i];
+				
+				if (el.slice(1, 2) === opt && el.length > 2) {
+					args.push(el.slice(2, el.length));
+				} else {
+					var j = i + 1;
+					
+					while (config.argv[j] !== undefined) {
+						var el2 = config.argv[j];
+						
+						if (el2[0] !== '-') {
+							args.push(el2);
+						} else {
+							break
+						}
+						
+						j++;
+					}
+				}
+			}
+		} else {
+			for (var i = 0, len = config.argv.length; i < len; i++) {
+				var el = config.argv[i];
+				
+				if (el.slice(2, el.length) === option) {
+					var j = i + 1;
+					
+					while (config.argv[j] !== undefined) {
+						var el2 = config.argv[j];
+						
+						if (el2[0] !== '-') {
+							args.push(el2);
+						} else {
+							break;
+						}
+						
+						j++;	
+					} 
+				} else if (el.slice(2, option.length + 2) === option && el.length > option.length + 2) {
+					var arr = el.split('=');
+					args.push(el.slice(1, el.length).join('='));
+				}
+			}
+		}
+	};
+		
+	if (obj.options && Array.isArray(obj.options)) {
+		for (var i = 0, len = obj.options; i < len; i++) {
+			searchForArguments(obj.options[i]);
+		}
+	} else if (obj.options) {
+		searchForArguments(obj.options);
+	}
+	
+	if (obj.longOptions && Array.isArray(obj.longOptions)) {
+		for (var i = 0, len = obj.longOptions; i < len; i++) {
+			searchForArguments(obj.longOptions[i]);
+		}
+	} else if (obj.longOptions) {
+		searchForArguments(obj.longOptions);
+	}
+	
+	if (args) {
+		return args;
+	};
+	
+	return null;
 };
 
 var setFlag = function setFlag(obj) {
 	if (!isOptionSet(obj.options) && !isOptionSet(obj.longOptions)) { return false; }
 
 	config.set[obj.reference] = {
-		arguments: (obj.arguments ? parseArguments(obj.options) : null)
+		arguments: (obj.arguments ? parseArguments(obj) : null)
 	};
 
 	return isSet(obj.reference);
@@ -172,7 +243,10 @@ var isSet = function isSet(reference) {
 };
 
 var get = function get(reference) {
-	return config.set[reference].arguments;
+	if (isSet(reference)) {
+		return config.set[reference].arguments;
+	}
+	return false;
 };
 
 module.exports.config = config;
