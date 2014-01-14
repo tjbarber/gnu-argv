@@ -105,13 +105,12 @@ var parseArguments = function parseARGV(obj) {
 					ARGVContainsOpt = true;
 				}
 		}
-		
 		if (!ARGVContainsOpt) { return; }
 
 		if (opt.length === 1) {
 			for (var i = 0, len = config.argv.length; i < len; i++) {
 				var el = config.argv[i];
-				
+
 				if (el.slice(0, 1) === '-' && el.slice(1, 2) === opt && el.length > 2) {
 					args.push(el.slice(2, el.length));
 				} else {
@@ -120,7 +119,7 @@ var parseArguments = function parseARGV(obj) {
 					while (stop === false) {
 						var el2 = config.argv[i + 1];
 
-						if (el2 !== undefined && el2[0] !== '-') {
+						if (el2 !== undefined && el2[0] !== '-' && args.indexOf(el2) === -1) {
 							args.push(el2);
 						}
 						stop = true;
@@ -137,7 +136,7 @@ var parseArguments = function parseARGV(obj) {
 					while (config.argv[j] && config.argv[j].slice(0, 1) !== '-') {
 						var el2 = config.argv[j];
 						
-						if (el2 !== undefined) {
+						if (el2 !== undefined && args.indexOf(el2) === -1) {
 							args.push(el2);
 						}
 						
@@ -150,9 +149,8 @@ var parseArguments = function parseARGV(obj) {
 			}
 		}
 	};
-		
 	if (obj.options && Array.isArray(obj.options)) {
-		for (var i = 0, len = obj.options; i < len; i++) {
+		for (var i = 0, len = obj.options.length; i < len; i++) {
 			searchForArguments(obj.options[i]);
 		}
 	} else if (obj.options) {
@@ -160,7 +158,7 @@ var parseArguments = function parseARGV(obj) {
 	}
 	
 	if (obj.longOptions && Array.isArray(obj.longOptions)) {
-		for (var i = 0, len = obj.longOptions; i < len; i++) {
+		for (var i = 0, len = obj.longOptions.length; i < len; i++) {
 			searchForArguments(obj.longOptions[i]);
 		}
 	} else if (obj.longOptions) {
