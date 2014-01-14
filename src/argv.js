@@ -94,11 +94,23 @@ var isOptionSet = function isOptionSet(options) {
 var parseArguments = function parseARGV(obj) {
 	var args = [];
 	var searchForArguments = function searchForArguments(opt) {
-		if ((config.argv.indexOf("-" + opt) === -1) && (config.argv.indexOf("-" + opt) === -1)) { return; }
+		var ARGVContainsOpt = false;
+		
+		for (var i = 0, len = config.argv.length; i < len; i++) {
+			if (config.argv[i].slice(2, config.argv[i].length) === opt || 
+				config.argv[i].slice(1, 2) === opt) {
+					ARGVContainsOpt = true;
+				}
+		}
+		
+		if (!ARGVContainsOpt) { return; }
+
 		if (opt.length === 1) {
 			for (var i = 0, len = config.argv.length; i < len; i++) {
 				var el = config.argv[i];
 				
+				// may be able to take this out
+				console.log("im here");
 				if (el.slice(0, 1) === '-' && el.slice(1, 2) === opt && el.length > 2) {
 					args.push(el.slice(2, el.length));
 				} else {
@@ -117,6 +129,7 @@ var parseArguments = function parseARGV(obj) {
 		} else {
 			for (var i = 0, len = config.argv.length; i < len; i++) {
 				var el = config.argv[i];
+				console.log("im here");
 				
 				if (el.slice(2, el.length) === option) {
 					var stop = false;
@@ -163,7 +176,7 @@ var parseArguments = function parseARGV(obj) {
 
 var setFlag = function setFlag(obj) {
 	if (!isOptionSet(obj.options) && !isOptionSet(obj.longOptions)) { return false; }
-
+	
 	config.set[obj.reference] = {
 		arguments: (obj.arguments ? parseArguments(obj) : null)
 	};
