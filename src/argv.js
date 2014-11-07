@@ -1,10 +1,10 @@
 "use strict";
 
 var config = {
-		allowed: [],
-		set: {},
-		argv: process.argv.slice(2, process.argv.length),
-		status: "production"
+	allowed: [],
+	set: {},
+	argv: process.argv.slice(2, process.argv.length),
+	status: "production"
 };
 
 // system functions
@@ -267,6 +267,6 @@ var get = function get(reference) {
 };
 
 module.exports.config = config;
-module.exports.set 	  = set;
-module.exports.isSet  = isSet;
-module.exports.get 	  = get;
+module.exports.set = set;
+module.exports.isSet = isSet;
+module.exports.get = get;
