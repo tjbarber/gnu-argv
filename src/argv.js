@@ -1,5 +1,3 @@
-"use strict";
-
 var config = {
 	allowed: [],
 	set: {},
@@ -9,144 +7,112 @@ var config = {
 
 // system functions
 
-var parseCurrentARGS = function parseCurrentARGS() {
-	
-	var abort = function abort() {
-		console.log("Invalid option passed.");
-		if (config.status !== "test") {
-			process.exit(1);
-		}
-	}
-	
-	var allowed = true;
-	for (var i = 0, len = config.argv.length; i < len; i++) {
-		var el = config.argv[i];
+function parseCurrentARGS() {	
+	let allowed = true;
+
+	config.argv.map(argument => {
 		// -rfdegerwe
-		if (el[0] === '-' && el[1] !== '-') {
-			el = el.slice(1, el.length);
-			for (var j = 0, len2 = el.length; j < len2; j++) {
-				var el2 = el[j];
-				if (config.allowed.indexOf(el2) === -1) {
-					abort();
-				}
-			}
+		if (argument[0] === '-' && argument[1] !== '-') {
+			const argumentChars = argument.slice(1, argument.length);
+			[...argumentChars].map(char => {
+				if (config.allowed.indexOf(char) === -1) abort();
+			});
 
 			return true;
 		}
-		
+
 		// --option
-		var el = el.split('=')[0]; // for --option=foo
-		if (config.allowed.indexOf(el.slice(2, el.length)) !== -1) {
-			return true;
-		}
-		
-		abort();
-	}
-};
 
-var isOptionSet = function isOptionSet(options) {
-	var checkArg = function checkArg(arg, option) {
-		var splitArg = arg.split('=');
+		const argumentName = argument.split('=')[0]; // for --option=foo
+		if (config.allowed.indexOf(argumentName.slice(2, argumentName.length)) !== -1) return true;
+		abort();
+	});
+}
+
+function isOptionSet(options) {
+	function checkArg(arg, option) {
+		const splitArg = arg.split('=');
 		
 		// -r or --option
-		if ((arg.slice(1, arg.length) === option) || (arg.slice(2, arg.length) === option)) {
-			return true;
-		}
+		if ((arg.slice(1, arg.length) === option) || (arg.slice(2, arg.length) === option)) return true;
 		
 		// --option=arg
-		if (splitArg[0].slice(2, splitArg[0].length) === option) {
-			return true;
-		}
+		if (splitArg[0].slice(2, splitArg[0].length) === option) return true;
 
 		// -rf
 		if (arg[0] === '-' && arg[1] !== '-' && arg.length > 2) {
-			var results = null;
+			let results = null;
 			arg = arg.slice(1, arg.length);
 			
-			for (var i = 0, len = arg.length; i < len; i++) {
-				if (arg[i] === option) {
-					results = true;
-				}
-			}
+			[...arg].map(char => {
+				if (char === option) results = true
+			});
 
-			if (results) {
-				return true;
-			}
+			if (results) return true;
 			return false;
 		}
-	};
+	}
 
-	var isSet = false;
+	let isSet = false;
 	if (Array.isArray(options)) {
-		for (var i = 0, len = config.argv.length; i < len; i++) {
-			var arg = config.argv[i];
-			
-			for (var j = 0, len2 = options.length; j < len2; j++) {
-				if (checkArg(arg, options[j])) {
-					isSet = true;
-				}
-			}
-		}
+		config.argv.map(argument => {			
+			options.map(option => {
+				if (checkArg(argument, option)) isSet = true;
+			});
+		});
 	} else {
-		for (var i = 0, len = config.argv.length; i < len; i++) {
-			if (checkArg(config.argv[i], options)) {
-				isSet = true;
-			}
-		}
+		config.argv.map(argument => {
+			if (checkArg(argument, options)) isSet = true;
+		});
 	}
 
-	if (isSet) {
-		return true;
-	}
+	return isSet
+}
 
-	return false;
-};
-
-var parseArguments = function parseARGV(obj) {
-	var args = [];
-	var searchForArguments = function searchForArguments(opt) {
-		var ARGVContainsOpt = false;
+function parseArguments(obj) {
+	let args = [];
+	function searchForArguments(opt) {
+		let ARGVContainsOpt = false;
 		
-		for (var i = 0, len = config.argv.length; i < len; i++) {
-			var splitEl = config.argv[i].split('=')[0];
+		config.argv.map(argument => {
+			const splitArgument = argument.split('=')[0];
 
-			if (config.argv[i].slice(2, config.argv[i].length) === opt || 
-				config.argv[i].slice(1, 2) === opt || 
-				splitEl.slice(2, splitEl.length) === opt) {
+			if (argument.slice(2, argument.length) === opt || 
+				argument.slice(1, 2) === opt || 
+				splitArgument.slice(2, splitArgument.length) === opt) {
 					ARGVContainsOpt = true;
 				}
-		}
-		if (!ARGVContainsOpt) { return; }
+		});
+		
+		if (!ARGVContainsOpt) return;
 
 		if (opt.length === 1) {
-			for (var i = 0, len = config.argv.length; i < len; i++) {
-				var el = config.argv[i];
-
-				if (el.slice(0, 1) === '-' && el.slice(1, 2) === opt && el.length > 2) {
-					args.push(el.slice(2, el.length));
+			config.argv.map((argument, index) => {
+				if (argument.slice(0 ,1) === '-' && argument.slice(1 ,2) === opt && argument.length > 2) {
+					args.push(argument.slice(2, argument.length));
 				} else {
-					var stop = false;
-					
-					while (stop === false) {
-						var el2 = config.argv[i + 1];
+					let stop = false;
 
-						if (el2 !== undefined && el2[0] !== '-' && args.indexOf(el2) === -1) {
-							args.push(el2);
+					while (stop === false) {
+						const nextArgument = config.argv[index + 1];
+
+						if (nextArgument !== undefined && nextArgument[0] !== '-' && args.indexOf(nextArgument) === -1) {
+							args.push(nextArgument);
 						}
-						stop = true;
+
+						stop = true
 					}
 				}
-			}
+			});
 		} else {
-			for (var i = 0, len = config.argv.length; i < len; i++) {
-				var el = config.argv[i],
-					splitEl = config.argv[i].split('=');
-					
-				if (el.slice(2, el.length) === opt) {
-					var j = i + 1;
-					
+			config.argv.map((argument, index) => {
+				const splitArgument = argument.split('=');
+
+				if (splitArgument.slice(2, argument.length === opt)) {
+					let nextIndex = index + 1;
+
 					while (config.argv[j] && config.argv[j].slice(0, 1) !== '-') {
-						var el2 = config.argv[j];
+						const el2 = config.argv[j];
 						
 						if (el2 !== undefined && args.indexOf(el2) === -1) {
 							args.push(el2);
@@ -154,24 +120,25 @@ var parseArguments = function parseARGV(obj) {
 						
 						j++;					
 					}
-				} else if (splitEl[0].slice(2, splitEl[0].length) === opt && el.length > opt.length + 2) {
-					args.push(splitEl.slice(1, el.length).join('='));
+				} else if (splitArgument[0].slice(2, splitArgument[0].length) === opt && argument.length > opt.length + 2) {
+					args.push(splitArgument.slice(1, argument.length).join('='));
 				}
-			}
+			});
 		}
 	};
+
 	if (obj.options && Array.isArray(obj.options)) {
-		for (var i = 0, len = obj.options.length; i < len; i++) {
-			searchForArguments(obj.options[i]);
-		}
+		obj.options.map(option => {
+			searchForArguments(option);
+		});
 	} else if (obj.options) {
 		searchForArguments(obj.options);
 	}
 	
 	if (obj.longOptions && Array.isArray(obj.longOptions)) {
-		for (var i = 0, len = obj.longOptions.length; i < len; i++) {
-			searchForArguments(obj.longOptions[i]);
-		}
+		obj.longOptions.map(option => {
+			searchForArguments(option);
+		});
 	} else if (obj.longOptions) {
 		searchForArguments(obj.longOptions);
 	}
@@ -181,9 +148,9 @@ var parseArguments = function parseARGV(obj) {
 	};
 	
 	return null;
-};
+}
 
-var setFlag = function setFlag(obj) {
+function setFlag(obj) {
 	if (!isOptionSet(obj.options) && !isOptionSet(obj.longOptions)) { return false; }
 
 	config.set[obj.reference] = {
@@ -191,61 +158,58 @@ var setFlag = function setFlag(obj) {
 	};
 
 	return isSet(obj.reference);
-};
+}
 
-var checkOption = function checkOption(option) {
+function checkOption(option) {
 	if (option && option.length !== 1) {
 		console.log(option + " is not a valid one character alphanumeric option name.");
 		return false;
 	}
 	return true;
-};
+}
 
-var parseOptions = function parseOptions(opts, longOptions) {
+function parseOptions(opts, longOptions) {
 	// keeps undefined from being added to config.allowed
 	// from a option object with no longOptions
-	if (!opts) { return };
+	if (!opts) return;
 	
 	longOptions = (longOptions || false);
 	if (Array.isArray(opts)) {
-		for (var i = 0, len = opts.length; i < len; i++) {
-			if (!longOptions && !checkOption(opts[i])) {
-				return;
-			}
-			config.allowed.push(opts[i]);
-		}
+		opts.map(option => {
+			if (!longOptions && !checkOption(option)) return;
+			config.allowed.push(option);
+		});
 	} else {
-		if (!longOptions && !checkOption(opts)) {
-			return;
-		}
+		if (!longOptions && !checkOption(opts)) return;
 		config.allowed.push(opts);
 	}
-};
+}
+
+function abort() {
+	console.log("Invalid option passed.");
+	if (config.status !== "test") process.exit(1);
+}
 
 // exposed methods
 
-var set = function set(obj) {
+function set(obj) {
 	if (Array.isArray(obj)) {
-		var results = null;
-		if (!obj.length) { return false; }
+		let results = null;
+		if (!obj.length) return false;
 		
-		for (var i = 0, len = obj.length; i < len; i++) {
-			parseOptions(obj[i].options);
-			parseOptions(obj[i].longOptions, true);
-		}
-
+		obj.map(option => {
+			parseOptions(option.options);
+			parseOptions(option.longOptions, true);
+		});
+	
 		parseCurrentARGS();
 
 		// running setFlag after all the option parsing is complete
-		for (var i = 0, len = obj.length; i < len; i++) {
-			results = setFlag(obj[i]);
-		}
+		obj.map(option => {
+			results = setFlag(option);
+		});
 
-		if (results) {
-			return true;
-		}
-		return false;
-
+		return results
 	} else {
 		parseOptions(obj.options);
 		parseOptions(obj.longOptions, true);
@@ -253,20 +217,20 @@ var set = function set(obj) {
 	}
 
 	return setFlag(obj);
-};
+}
 
-var isSet = function isSet(reference) {
+function isSet(reference) {
 	return !!config.set[reference];
-};
+}
 
-var get = function get(reference) {
-	if (isSet(reference)) {
-		return config.set[reference].arguments;
-	}
+function get(reference) {
+	if (isSet(reference)) return config.set[reference].arguments;
 	return false;
-};
+}
 
-module.exports.config = config;
-module.exports.set = set;
-module.exports.isSet = isSet;
-module.exports.get = get;
+module.exports = {
+	config,
+	set,
+	isSet,
+	get
+}

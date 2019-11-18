@@ -1,5 +1,5 @@
 {
-  "name": "argv-posix",
+  "name": "gnu-argv",
   "version": "0.1.0",
   "description": "An unintrusive, easy-to-use ARGV parser that's compliant with GNU's Program Argument Syntax Conventions.",
   "main": "src/argv.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tjbarber/argv-posix"
+    "url": "https://github.com/tjbarber/gnu-argv"
   },
   "keywords": [
     "cli",
@@ -19,10 +19,10 @@
   "devDependencies": {
     "chai": "latest"
   },
-  "author": "T.J. Barber",
+  "author": "TJ Barber",
   "license": "BSD",
   "bugs": {
-    "url": "https://github.com/tjbarber/argv-posix/issues"
+    "url": "https://github.com/tjbarber/gnu-argv/issues"
   },
-  "homepage": "https://github.com/tjbarber/argv-posix"
+  "homepage": "https://github.com/tjbarber/gnu-argv"
 }
