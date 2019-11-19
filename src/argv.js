@@ -30,29 +30,6 @@ function parseCurrentARGS() {
 }
 
 function isOptionSet(options) {
-	function checkArg(arg, option) {
-		const splitArg = arg.split('=');
-		
-		// -r or --option
-		if ((arg.slice(1, arg.length) === option) || (arg.slice(2, arg.length) === option)) return true;
-		
-		// --option=arg
-		if (splitArg[0].slice(2, splitArg[0].length) === option) return true;
-
-		// -rf
-		if (arg[0] === '-' && arg[1] !== '-' && arg.length > 2) {
-			let results = null;
-			arg = arg.slice(1, arg.length);
-			
-			[...arg].map(char => {
-				if (char === option) results = true
-			});
-
-			if (results) return true;
-			return false;
-		}
-	}
-
 	let isSet = false;
 	if (Array.isArray(options)) {
 		config.argv.map(argument => {			
@@ -67,6 +44,29 @@ function isOptionSet(options) {
 	}
 
 	return isSet
+}
+
+function checkArg(arg, option) {
+	const splitArg = arg.split('=');
+	
+	// -r or --option
+	if ((arg.slice(1, arg.length) === option) || (arg.slice(2, arg.length) === option)) return true;
+	
+	// --option=arg
+	if (splitArg[0].slice(2, splitArg[0].length) === option) return true;
+
+	// -rf
+	if (arg[0] === '-' && arg[1] !== '-' && arg.length > 2) {
+		let results = null;
+		arg = arg.slice(1, arg.length);
+		
+		[...arg].map(char => {
+			if (char === option) results = true
+		});
+
+		if (results) return true;
+		return false;
+	}
 }
 
 function parseArguments(obj) {
